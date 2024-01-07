@@ -5,15 +5,14 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 
 import { HullMaterialService } from './services/hull-material.service';
-import { HullMaterial } from './models/hull-metarial';
+import { HullMaterial } from './models/hull-material';
 import { AlertifyService } from 'app/core/services/alertify.service';
+import { HullMaterialResponse } from './models/hull-material-respone';
 
 declare var JQuery: any;
 
 @Component({
   selector: 'app-hull-material',
-  standalone: true,
-  imports: [],
   templateUrl: './hull-material.component.html',
   styleUrl: './hull-material.component.css'
 })
@@ -23,13 +22,14 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
   @ViewChild(MatSort) sort: MatSort;
 
   materialList: HullMaterial[] = [];
+  materilaListResponse: HullMaterialResponse;
   hullMaterial: HullMaterial = new HullMaterial;
   dataLoaded = false;
 
   myHullMaterialControl = new FormControl("");
 
   displayedColumns: string[] = [
-    "hullMaterialName",
+    "name",
     "update",
     "delete"
   ];
@@ -51,10 +51,10 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
   }
 
   getHullMaterialList() {
-    this.hullMaterialService.getHullMaterialList().subscribe((data) => {
-      this.materialList = data;
+    this.hullMaterialService.getHullMaterialList().subscribe((response) => {
+      this.materilaListResponse = response;
       this.dataLoaded = true;
-      this.dataSource = new MatTableDataSource(data);
+      this.dataSource = new MatTableDataSource(response.data);
       this.configDataTable();
     })
   }
@@ -73,7 +73,7 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
       this.hullMaterial = Object.assign({}, this.hullMaterialAddForm.value);
 
       if (!this.hullMaterial.id) {
-        this.addHUllMaterial();
+        this.addHullMaterial();
       } else {
         this.updateHullMaterial();
       }
@@ -87,12 +87,12 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
     });
   }
 
-  addHUllMaterial() {
+  addHullMaterial() {
     this.hullMaterialService.addHullMaterial(this.hullMaterial).subscribe(
       (data) => {
         this.getHullMaterialList();
         this.hullMaterial = new HullMaterial();
-        jQuery('#hullMaterial').modal('hide');
+        JQuery('#hullMaterial').modal('hide');
         this.alertifyService.success(data);
         this.clearFormGroup(this.hullMaterialAddForm);
       },
@@ -111,7 +111,7 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
       this.configDataTable();
       this.getHullMaterialList();
       this.hullMaterial = new HullMaterial();
-      JQuery("#HullMaterial").modal("hide");
+      JQuery("#hullMaterial").modal("hide");
       this.alertifyService.success(data);
       this.clearFormGroup(this.hullMaterialAddForm);
     });

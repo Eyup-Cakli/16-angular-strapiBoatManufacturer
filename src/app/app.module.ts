@@ -18,6 +18,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
+import { HullMaterialComponent } from './core/components/admin/hull-material/hull-material.component';
 
 // i18 kullanıclak ise aşağıdaki metod aktif edilecek
 
@@ -62,7 +63,8 @@ export function tokenGetter() {
   ],
   declarations: [
     AppComponent,
-    AdminLayoutComponent
+    AdminLayoutComponent,
+    HullMaterialComponent
 
   ],
 

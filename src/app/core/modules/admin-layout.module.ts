@@ -64,7 +64,7 @@ import { MatNativeDateModule } from '@angular/material/core';
         
     ],
     declarations: [
-        DashboardComponent,
+        DashboardComponent
         
     ]
 })

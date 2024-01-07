@@ -3,6 +3,7 @@ import { CommonModule, } from '@angular/common';
 import { BrowserModule  } from '@angular/platform-browser';
 import { Routes, RouterModule } from '@angular/router';
 import { AdminLayoutComponent } from './core/components/app/layouts/admin-layout/admin-layout.component';
+import { HullMaterialComponent } from './core/components/admin/hull-material/hull-material.component';
 // import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 // import { LoginComponent } from './login/login.component';
 
@@ -21,6 +22,9 @@ const routes: Routes =[
       path: 'admin-layout',
       // loadChildren: './core/components/app/layouts/admin-layout/admin-layout.module#AdminLayoutModule'
       loadChildren: () => import('./core/modules/admin-layout.module').then(m => m.AdminLayoutModule)
+    },{
+      path: 'hull-material',
+      component: HullMaterialComponent
     }]
   }
 ];
