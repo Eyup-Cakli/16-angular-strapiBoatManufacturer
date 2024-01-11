@@ -5,7 +5,7 @@
           <div class="card">
             <div class="card-header card-header-info">
               <h4 class="card-title ">{{'Hull Material List'}}</h4>
-              <a *ngIf="('CreateHullMaterialCommand')" class="pull-right" data-toggle="modal" data-target="#hullMaterial">
+              <a *ngIf="('CreateHullMaterialAddForm')" class="pull-right" data-toggle="modal" data-target="#hullMaterial">
                 <i style="color:white" title="{{'Add'}}" class="far fa-plus-square fa-2x"></i></a>
             </div>
             <div class="card-body">
@@ -31,7 +31,7 @@
                   <ng-container matColumnDef="update">
                     <th mat-header-cell *matHeaderCellDef></th>
                     <td style="width: 25px;" mat-cell *matCellDef="let element">
-                      <a data-toggle="modal" data-target="#hullMaterial" (click)="getHullMaterialById(element._id)">
+                      <a data-toggle="modal" data-target="#hullMaterial" (click)="getHullMaterialById(element.id)">
                         <i title="{{'Update'}}" style="color: #ff5722;" class="far fa-edit"></i>
                       </a>
                     </td>
@@ -58,7 +58,7 @@
     </div>
   </div>
   
-  <div class="modal modal-angular fade" id="boatHullMetarial" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal modal-angular fade" id="hullMaterial" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-body text-center">

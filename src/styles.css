@@ -5,41 +5,44 @@
 @import "~alertifyjs/build/css/themes/bootstrap.min.css";
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
 
-
 .no-sort::after {
-	display: none !important;
-	/* background-image: url() !important; */
+  display: none !important;
+  /* background-image: url() !important; */
 }
 
 .no-sort {
-	pointer-events: none !important;
-	cursor: default !important;
-	/* background-image: url() !important; */
+  pointer-events: none !important;
+  cursor: default !important;
+  /* background-image: url() !important; */
 }
 
 .card .card-header .card-title {
-	margin-bottom: -28px !important;
+  margin-bottom: -28px !important;
 }
 
-table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTable thead .sorting_desc, table.dataTable thead .sorting_asc_disabled, table.dataTable thead .sorting_desc_disabled {
-	/*  cursor: pointer;
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc,
+table.dataTable thead .sorting_asc_disabled,
+table.dataTable thead .sorting_desc_disabled {
+  /*  cursor: pointer;
   *cursor: hand;
   background-repeat: no-repeat;*/
-	background-position: center left !important;
+  background-position: center left !important;
 }
 
 a:hover {
-	cursor: pointer !important;
+  cursor: pointer !important;
 }
 
 span:hover {
-	cursor: pointer !important;
+  cursor: pointer !important;
 }
 
 table {
-    width: 100%;
-  }
+  width: 100%;
+}
 
-  .cdk-overlay-container {
-	z-index: 9999 !important;
-  }
+.cdk-overlay-container {
+  z-index: 9999 !important;
+}

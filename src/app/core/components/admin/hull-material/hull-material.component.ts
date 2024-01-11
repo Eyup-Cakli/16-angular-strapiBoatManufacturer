@@ -7,9 +7,8 @@ import { MatSort } from '@angular/material/sort';
 import { HullMaterialService } from './services/hull-material.service';
 import { HullMaterial } from './models/hull-material';
 import { AlertifyService } from 'app/core/services/alertify.service';
-import { HullMaterialResponse } from './models/hull-material-respone';
 
-declare var JQuery: any;
+declare var jQuery: any;
 
 @Component({
   selector: 'app-hull-material',
@@ -22,8 +21,7 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
   @ViewChild(MatSort) sort: MatSort;
 
   materialList: HullMaterial[] = [];
-  materilaListResponse: HullMaterialResponse;
-  hullMaterial: HullMaterial = new HullMaterial;
+  hullMaterial: HullMaterial = new HullMaterial();
   dataLoaded = false;
 
   myHullMaterialControl = new FormControl("");
@@ -51,10 +49,10 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
   }
 
   getHullMaterialList() {
-    this.hullMaterialService.getHullMaterialList().subscribe((response) => {
-      this.materilaListResponse = response;
+    this.hullMaterialService.getHullMaterialList().subscribe((data) => {
+      this.materialList = data;
       this.dataLoaded = true;
-      this.dataSource = new MatTableDataSource(response.data);
+      this.dataSource = new MatTableDataSource(data);
       this.configDataTable();
     })
   }
@@ -63,8 +61,10 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
     this.clearFormGroup(this.hullMaterialAddForm);
     this.hullMaterialService.getHullMaterialById(id).subscribe((data) => {
       this.hullMaterial = data;
-
-      this.hullMaterialAddForm.patchValue(data);
+      this.hullMaterialAddForm.patchValue({
+        id: data.id,
+        name: data.attributes.name
+      });
     });
   }
 
@@ -82,7 +82,7 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
 
   createHullMaterialAddForm() {
     this.hullMaterialAddForm = this.formBuilder.group({
-      id: 0,
+      id: [0],
       name: ""
     });
   }
@@ -92,7 +92,7 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
       (data) => {
         this.getHullMaterialList();
         this.hullMaterial = new HullMaterial();
-        JQuery('#hullMaterial').modal('hide');
+        jQuery('#hullMaterial').modal('hide');
         this.alertifyService.success(data);
         this.clearFormGroup(this.hullMaterialAddForm);
       },
@@ -111,9 +111,13 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
       this.configDataTable();
       this.getHullMaterialList();
       this.hullMaterial = new HullMaterial();
-      JQuery("#hullMaterial").modal("hide");
+      jQuery("#hullMaterial").modal("hide");
       this.alertifyService.success(data);
       this.clearFormGroup(this.hullMaterialAddForm);
+    },
+    (error) => {
+      console.log(error);
+      this.alertifyService.error(error.error);
     });
   }
 
