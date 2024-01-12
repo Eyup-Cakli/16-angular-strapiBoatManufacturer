@@ -2,27 +2,24 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'environments/environment';
-import { apiToken } from 'environments/apiToken';
 import { HullMaterial } from '../models/hull-material';
-import { map } from 'rxjs/operators';
+import { AbstractResponseService } from '../../abstract/abstractResponseService';
 
 @Injectable({
   providedIn: 'root'
 })
-export class HullMaterialService {
+export class HullMaterialService extends AbstractResponseService<HullMaterial> {
 
-  constructor(private readonly httpClient: HttpClient) {
+  constructor(httpClient: HttpClient) {
+    super(httpClient);
   }
 
   getHullMaterialList(): Observable<HullMaterial[]>{
-    return this.httpClient.get<HullMaterial[]>(environment.getApiUrl + "/hull-materials", { headers: apiToken }).pipe(
-      map((res: any) => res.data)
-    );
+    return this.getDataList(`${environment.getApiUrl}/hull-materials`);
   }
 
   getHullMaterialById(id: number) {
-    return this.httpClient.get<HullMaterial>(environment.getApiUrl + "/hull-materials/" + id, { headers: apiToken }).pipe(
-      map((res: any) => res.data));
+    return this.getDataById(`${environment.getApiUrl}/hull-materials`,id);
   }
 
   addHullMaterial(hullMaterail: HullMaterial): Observable<any> {
@@ -31,7 +28,7 @@ export class HullMaterialService {
         name: hullMaterail.name
       }
     }
-    return this.httpClient.post(environment.getApiUrl + "/hull-materials", data, { responseType: 'text', headers: apiToken });
+    return this.addData(`${environment.getApiUrl}/hull-materials`, data);
   }
 
   updateHullMaterial(hullMaterail: HullMaterial): Observable<any> {
@@ -40,10 +37,10 @@ export class HullMaterialService {
         name: hullMaterail.name
       }
     }
-    return this.httpClient.put(environment.getApiUrl + "/hull-materials/"+ hullMaterail.id, updatedData, { responseType: 'text', headers: apiToken });
+    return this.updateData(`${environment.getApiUrl}/hull-materials`, hullMaterail.id, updatedData);
   }
 
   deleteHullMaterial(id: number) {
-    return this.httpClient.request('delete', environment.getApiUrl + "/hull-materials/" + id ,{ headers: apiToken });
+    return this.deleteData(`${environment.getApiUrl}/hull-materials`, id);
   }
 }

@@ -2,9 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Type } from '../models/type';
 import { environment } from 'environments/environment';
-import { apiToken } from 'environments/apiToken';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { AbstractResponseService } from '../../abstract/abstractResponseService';
 
 @Injectable({
