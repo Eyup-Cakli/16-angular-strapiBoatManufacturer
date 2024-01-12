@@ -144,9 +144,14 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    console.log('Filtre Değeri:', filterValue);
+  
+    this.dataSource.filter = filterValue;
+  
+    // Filtrelenmiş verileri konsolda görüntüle
+    console.log('Filtrelenmiş Veriler:', filterValue);
+  
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }

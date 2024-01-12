@@ -4,6 +4,7 @@ import { BrowserModule  } from '@angular/platform-browser';
 import { Routes, RouterModule } from '@angular/router';
 import { AdminLayoutComponent } from './core/components/app/layouts/admin-layout/admin-layout.component';
 import { HullMaterialComponent } from './core/components/admin/hull-material/hull-material.component';
+import { TypeComponent } from './core/components/admin/type/type.component';
 // import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 // import { LoginComponent } from './login/login.component';
 
@@ -25,6 +26,9 @@ const routes: Routes =[
     },{
       path: 'hull-material',
       component: HullMaterialComponent
+    },{
+      path: 'type',
+      component: TypeComponent
     }]
   }
 ];
