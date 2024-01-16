@@ -18,6 +18,10 @@ export class ManufacturerLogoService extends AbstractResponseService<Manufacture
     return this.getDataList(`${environment.getApiUrl}/manufacturer-logo`);
   }
 
+  getManufacturerLogoById(id: number) {
+    return this.getDataById(`${environment.getApiUrl}/manufacturer-logo`, id);
+  }
+
   addManufacturerLogo(manufacturerLogo: ManufacturerLogo): Observable<any>{
     const data = {
       data: {

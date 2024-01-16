@@ -20,6 +20,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
 import { HullMaterialComponent } from './core/components/admin/hull-material/hull-material.component';
 import { TypeComponent } from './core/components/admin/type/type.component';
+import { ManufacturerLogoComponent } from './core/components/admin/manufacturer-logo/manufacturer-logo.component';
 
 // i18 kullanıclak ise aşağıdaki metod aktif edilecek
 
@@ -66,7 +67,8 @@ export function tokenGetter() {
     AppComponent,
     AdminLayoutComponent,
     HullMaterialComponent,
-    TypeComponent
+    TypeComponent,
+    ManufacturerLogoComponent
 
   ],
 
