@@ -15,6 +15,7 @@ declare interface RouteInfo {
 export const USERROUTES: RouteInfo[] = [ 
   { path: '/hull-material', title: 'Boat Hull Metarial', icon: 'build', class: '', claim: "" },
   { path: '/type', title: 'Boat Type', icon: 'category', class: '', claim: "" },
+  { path: '/manufacturer-logo', title: 'Manufacturer Logo', icon: 'perm_media', class: '', claim: ''}
 ]
   
 

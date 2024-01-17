@@ -7,6 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { ManufacturerLogoService } from './services/manufacturer-logo.service';
 import { ManufacturerLogo } from './models/manufacturerLogo';
 import { AlertifyService } from 'app/core/services/alertify.service';
+import { environment } from 'environments/environment';
 
 declare var jQuery: any;
 
@@ -54,8 +55,13 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
       this.manufacturerLogoList = data;
       this.dataLoaded = true;
       this.dataSource = new MatTableDataSource(data);
+      console.log("manufacturerLogoList :", data);
       this.configDataTable();
     })
+  }
+
+  getImageUrl(element: ManufacturerLogo) {
+    return "http://localhost:1337" + element
   }
 
   getManufacturerLogoById(id: number) {
@@ -83,6 +89,7 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
   createManufacturerLogoAddForm() {
     this.manufacturerLogoAddForm = this.formBuilder.group({
       id: [0],
+      name: ""
     })
   }
 

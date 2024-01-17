@@ -1,5 +1,5 @@
 export class ManufacturerLogo {
     id: number;
-    fileName: string;
+    name: string;
     url: string;
 }

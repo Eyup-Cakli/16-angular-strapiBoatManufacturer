@@ -15,11 +15,11 @@ export class ManufacturerLogoService extends AbstractResponseService<Manufacture
   }
 
   getManufacturerLogoList(): Observable<ManufacturerLogo[]>{
-    return this.getDataList(`${environment.getApiUrl}/manufacturer-logo`);
+    return this.getDataList(`${environment.getApiUrl}/manufacturer-logos`);
   }
 
   getManufacturerLogoById(id: number) {
-    return this.getDataById(`${environment.getApiUrl}/manufacturer-logo`, id);
+    return this.getDataById(`${environment.getApiUrl}/manufacturer-logos`, id);
   }
 
   addManufacturerLogo(manufacturerLogo: ManufacturerLogo): Observable<any>{
@@ -28,7 +28,7 @@ export class ManufacturerLogoService extends AbstractResponseService<Manufacture
 
       }
     }
-    return this.addData(`${environment.getApiUrl}/manufacturer-logo`, data);
+    return this.addData(`${environment.getApiUrl}/manufacturer-logos`, data);
   }
 
   updateManufacturerLogo(manufacturerLogo: ManufacturerLogo): Observable<any> {
@@ -37,10 +37,10 @@ export class ManufacturerLogoService extends AbstractResponseService<Manufacture
 
       }
     }
-    return this.updateData(`${environment.getApiUrl}/manufacturer-logo`, manufacturerLogo.id, updateData);
+    return this.updateData(`${environment.getApiUrl}/manufacturer-logos`, manufacturerLogo.id, updateData);
   }
 
   deleteManufacturerLogo(id: number) {
-    return this.deleteData(`${environment.getApiUrl}/manufacturer-logo`, id);
+    return this.deleteData(`${environment.getApiUrl}/manufacturer-logos`, id);
   }
 }
