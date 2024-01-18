@@ -28,7 +28,7 @@ export class TypeService extends AbstractResponseService<Type>{
         name: type.name
       }
     }
-    return this.addData(`${environment.getApiUrl}/types`, data); 
+    return this.createData(`${environment.getApiUrl}/types`, data); 
   }
 
   updateType(type: Type): Observable<any> {

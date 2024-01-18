@@ -28,7 +28,7 @@ export class HullMaterialService extends AbstractResponseService<HullMaterial> {
         name: hullMaterail.name
       }
     }
-    return this.addData(`${environment.getApiUrl}/hull-materials`, data);
+    return this.createData(`${environment.getApiUrl}/hull-materials`, data);
   }
 
   updateHullMaterial(hullMaterail: HullMaterial): Observable<any> {

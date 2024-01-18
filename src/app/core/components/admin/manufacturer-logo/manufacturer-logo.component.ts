@@ -7,7 +7,6 @@ import { MatSort } from '@angular/material/sort';
 import { ManufacturerLogoService } from './services/manufacturer-logo.service';
 import { ManufacturerLogo } from './models/manufacturerLogo';
 import { AlertifyService } from 'app/core/services/alertify.service';
-import { environment } from 'environments/environment';
 
 declare var jQuery: any;
 
@@ -25,6 +24,9 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
   manufacturerLogo: ManufacturerLogo = new ManufacturerLogo();
   dataLoaded = false;
 
+  file: File = null;
+  shortLink: string = ""; 
+
   myManufacturerLogoControl = new FormControl("");
 
   displayedColumns: string[] = [
@@ -35,6 +37,7 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
   ];
 
   manufacturerLogoAddForm: FormGroup;
+  image: any;
 
   constructor(
     private manufacturerLogoService: ManufacturerLogoService,
@@ -68,8 +71,10 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
     this.clearFormGroup(this.manufacturerLogoAddForm);
     this.manufacturerLogoService.getManufacturerLogoById(id).subscribe((data) => {
       this.manufacturerLogo = data;
+      console.log("logo: ", data);
       this.manufacturerLogoAddForm.patchValue({
         id: data.id,
+        name: data.attributes.name
       });
     });
   }
@@ -89,25 +94,48 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
   createManufacturerLogoAddForm() {
     this.manufacturerLogoAddForm = this.formBuilder.group({
       id: [0],
-      name: ""
+      name: "",
+      image:""
     })
   }
 
-  addManufacturerLogo() {
-    this.manufacturerLogoService.addManufacturerLogo(this.manufacturerLogo).subscribe(
-      (data) => {
-        this.getManufacturerLogoList();
-        this.manufacturerLogo = new ManufacturerLogo();
-        jQuery('#manufacturerLogo').modal('hide');
-        this.alertifyService.success(data);
-        this.clearFormGroup(this.manufacturerLogoAddForm);
-      },
-      (error) => {
-        console.log(error);
-        this.alertifyService.error(error.error);
-      }
-    );
+  onFileSelected(event: any) {
+    this.file = event.target.files[0];
+    this.setImagePreview();
   }
+  
+  setImagePreview() {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.image = reader.result as string;
+    };
+    reader.readAsDataURL(this.file);
+  }
+
+  addManufacturerLogo() {
+    if (this.manufacturerLogoAddForm.valid) {
+      this.manufacturerLogo = Object.assign({}, this.manufacturerLogoAddForm.value);
+  
+      if (!this.manufacturerLogo.id && this.file) {
+        this.manufacturerLogoService.addManufacturerLogo(this.manufacturerLogo, this.file).subscribe(
+          (data) => {
+            this.getManufacturerLogoList();
+            this.manufacturerLogo = new ManufacturerLogo();
+            jQuery('#manufacturerLogo').modal('hide');
+            this.alertifyService.success(data);
+            this.clearFormGroup(this.manufacturerLogoAddForm);
+          },
+          (error) => {
+            console.log(error);
+            this.alertifyService.error(error.error);
+          }
+        );
+      } else {
+        this.updateManufacturerLogo();
+      }
+    }
+  }
+  
 
   updateManufacturerLogo() {
     this.manufacturerLogoService.updateManufacturerLogo(this.manufacturerLogo).subscribe((data) => {

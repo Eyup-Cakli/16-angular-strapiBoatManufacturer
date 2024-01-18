@@ -22,13 +22,17 @@ export class ManufacturerLogoService extends AbstractResponseService<Manufacture
     return this.getDataById(`${environment.getApiUrl}/manufacturer-logos`, id);
   }
 
-  addManufacturerLogo(manufacturerLogo: ManufacturerLogo): Observable<any>{
+  addManufacturerLogo(manufacturerLogo: ManufacturerLogo, image: File): Observable<any> {
+
     const data = {
       data: {
-
+        name: manufacturerLogo.name
       }
     }
-    return this.addData(`${environment.getApiUrl}/manufacturer-logos`, data);
+    const formData = new FormData();
+    formData.append('files.image', image);
+  
+    return this.createData(`${environment.getApiUrl}/manufacturer-logos`, { data, formData});
   }
 
   updateManufacturerLogo(manufacturerLogo: ManufacturerLogo): Observable<any> {
@@ -42,5 +46,12 @@ export class ManufacturerLogoService extends AbstractResponseService<Manufacture
 
   deleteManufacturerLogo(id: number) {
     return this.deleteData(`${environment.getApiUrl}/manufacturer-logos`, id);
+  }
+
+  uploadManufacturerLogo(file):Observable<any>{
+    const formData = new FormData();
+    formData.append("file", file, file.name);
+
+    return this.upload(`${environment.getApiUrl}/manufacturers.logo`, formData);
   }
 }

@@ -17,8 +17,13 @@ export abstract class AbstractResponseService<T> {
             map((res: any) => res.data)
         )
     }
-
-    addData(apiUrl: string, data: any): Observable<any> {
+/**
+ * Creates data
+ * @param apiUrl 
+ * @param data 
+ * @returns 
+ */
+    createData(apiUrl: string, data: any): Observable<any> {
         return this.httpClient.post(apiUrl, data, { responseType: 'text', headers: apiToken })
     }
 
@@ -28,5 +33,9 @@ export abstract class AbstractResponseService<T> {
 
     deleteData(apiUrl: string, id:number): Observable<any> {
         return this.httpClient.delete(`${apiUrl}/${id}`, { headers: apiToken })
+    }
+
+    upload(apiUrl: string, formData: any): Observable<any>{
+        return this.httpClient.post(apiUrl, formData, { headers: apiToken })
     }
 }

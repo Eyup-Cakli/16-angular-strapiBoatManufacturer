@@ -30,7 +30,7 @@ export class ManufacturerService extends AbstractResponseService<Manufacturer> {
         image: manufacturer.image
       }
     }
-    return this.addData(`${environment.getApiUrl}/manufacturers`, data);
+    return this.createData(`${environment.getApiUrl}/manufacturers`, data);
   }
 
   updateManufacturer(manufacturer: Manufacturer): Observable<any>{
