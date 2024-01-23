@@ -7,6 +7,8 @@ import { MatSort } from '@angular/material/sort';
 import { ManufacturerLogoService } from './services/manufacturer-logo.service';
 import { ManufacturerLogo } from './models/manufacturerLogo';
 import { AlertifyService } from 'app/core/services/alertify.service';
+import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
+import { apiToken } from 'environments/apiToken';
 
 declare var jQuery: any;
 
@@ -24,8 +26,7 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
   manufacturerLogo: ManufacturerLogo = new ManufacturerLogo();
   dataLoaded = false;
 
-  file: File = null;
-  shortLink: string = ""; 
+  file: File | null = null;
 
   myManufacturerLogoControl = new FormControl("");
 
@@ -37,12 +38,12 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
   ];
 
   manufacturerLogoAddForm: FormGroup;
-  image: any;
 
   constructor(
     private manufacturerLogoService: ManufacturerLogoService,
     private formBuilder: FormBuilder,
-    private alertifyService: AlertifyService
+    private alertifyService: AlertifyService,
+    private httpClient: HttpClient
   ) {}
 
   ngAfterViewInit(): void {
@@ -84,7 +85,8 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
       this.manufacturerLogo = Object.assign({}, this.manufacturerLogoAddForm.value);
 
       if (!this.manufacturerLogo.id) {
-        this.addManufacturerLogo();
+        //this.addManufacturerLogo();
+        this.onUpload();
       } else {
         this.updateManufacturerLogo();
       }
@@ -95,46 +97,58 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
     this.manufacturerLogoAddForm = this.formBuilder.group({
       id: [0],
       name: "",
-      image:""
+      image: ""
     })
   }
 
-  onFileSelected(event: any) {
-    this.file = event.target.files[0];
-    this.setImagePreview();
-  }
-  
-  setImagePreview() {
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.image = reader.result as string;
-    };
-    reader.readAsDataURL(this.file);
-  }
+  fileUploadProgress: number;
 
-  addManufacturerLogo() {
-    if (this.manufacturerLogoAddForm.valid) {
-      this.manufacturerLogo = Object.assign({}, this.manufacturerLogoAddForm.value);
-  
-      if (!this.manufacturerLogo.id && this.file) {
-        this.manufacturerLogoService.addManufacturerLogo(this.manufacturerLogo, this.file).subscribe(
-          (data) => {
-            this.getManufacturerLogoList();
-            this.manufacturerLogo = new ManufacturerLogo();
-            jQuery('#manufacturerLogo').modal('hide');
-            this.alertifyService.success(data);
-            this.clearFormGroup(this.manufacturerLogoAddForm);
-          },
-          (error) => {
-            console.log(error);
-            this.alertifyService.error(error.error);
-          }
-        );
-      } else {
-        this.updateManufacturerLogo();
-      }
+  onFileChanged(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.file = file;
+      this.manufacturerLogoAddForm.patchValue({ image: file.name });
     }
   }
+
+  onUpload() {
+    if (this.file) {
+      this.manufacturerLogoService.uploadManufacturerLogo(this.file, this.manufacturerLogoAddForm.get('name').value)
+        .subscribe(
+          (result) => {
+            if (typeof result === 'number') {
+              console.log(`Upload progress: ${result}%`);
+            } else {
+              console.log('Upload successful. Result:', result);
+              this.getManufacturerLogoList();
+            }
+          },
+          (error) => {
+            console.error('Upload failed. Error:', error);
+          }
+        );
+    } else {
+      console.error('File is undefined!');
+      // Handle the case when file is undefined
+    }
+  }
+
+  // addManufacturerLogo() {
+  //   this.manufacturerLogoService.createManufacturerLogo(this.manufacturerLogo).subscribe(
+  //     (data) => {
+  //       console.log("data: ", data)
+  //       this.getManufacturerLogoList();
+  //       this.manufacturerLogo = new ManufacturerLogo();
+  //       jQuery('#manufacturerLogo').modal('hide');
+  //       this.alertifyService.success(data);
+  //       this.clearFormGroup(this.manufacturerLogoAddForm);
+  //     },
+  //     (error) => {
+  //       console.log(error);
+  //       this.alertifyService.error(error.error);
+  //     }
+  //   );
+  // }
   
 
   updateManufacturerLogo() {
@@ -183,7 +197,6 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
   
     this.dataSource.filter = filterValue;
   
-    // Filtrelenmiş verileri konsolda görüntüle
     console.log('Filtrelenmiş Veriler:', filterValue);
   
     if (this.dataSource.paginator) {

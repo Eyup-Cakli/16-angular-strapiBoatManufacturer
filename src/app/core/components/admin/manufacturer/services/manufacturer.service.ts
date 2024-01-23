@@ -22,7 +22,7 @@ export class ManufacturerService extends AbstractResponseService<Manufacturer> {
     return this.getDataById(`${environment.getApiUrl}/manufacturers`, id);
   }
 
-  addManufacturer(manufacturer: Manufacturer): Observable<any> {
+  createManufacturer(manufacturer: Manufacturer): Observable<any> {
     const data = {
       data: {
         name: manufacturer.name,

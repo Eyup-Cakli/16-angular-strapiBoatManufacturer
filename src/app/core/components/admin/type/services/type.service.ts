@@ -22,7 +22,7 @@ export class TypeService extends AbstractResponseService<Type>{
     return this.getDataById(`${environment.getApiUrl}/types`, id);
   }
 
-  addType(type: Type): Observable<any> {
+  createType(type: Type): Observable<any> {
     const data = {
       data: {
         name: type.name

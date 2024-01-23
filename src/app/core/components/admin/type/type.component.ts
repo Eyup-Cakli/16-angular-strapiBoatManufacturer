@@ -85,8 +85,9 @@ export class TypeComponent implements AfterViewInit, OnInit {
   }
 
   addType() {
-    this.typeService.addType(this.type).subscribe(
+    this.typeService.createType(this.type).subscribe(
       (data) => {
+        console.log(data);
         this.getTypeList();
         this.type = new Type();
         jQuery('#type').modal('hide');

@@ -88,7 +88,7 @@ export class HullMaterialComponent implements AfterViewInit, OnInit{
   }
 
   addHullMaterial() {
-    this.hullMaterialService.addHullMaterial(this.hullMaterial).subscribe(
+    this.hullMaterialService.createHullMaterial(this.hullMaterial).subscribe(
       (data) => {
         this.getHullMaterialList();
         this.hullMaterial = new HullMaterial();
