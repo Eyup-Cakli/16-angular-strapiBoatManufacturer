@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnInit, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -9,6 +9,7 @@ import { ManufacturerLogo } from './models/manufacturerLogo';
 import { AlertifyService } from 'app/core/services/alertify.service';
 import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
 import { apiToken } from 'environments/apiToken';
+import { Subscription } from 'rxjs';
 
 declare var jQuery: any;
 
@@ -17,7 +18,7 @@ declare var jQuery: any;
   templateUrl: './manufacturer-logo.component.html',
   styleUrl: './manufacturer-logo.component.css'
 })
-export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
+export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestroy {
   dataSource: MatTableDataSource<any>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -45,6 +46,14 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
     private alertifyService: AlertifyService,
     private httpClient: HttpClient
   ) {}
+
+  private uploadSubscription: Subscription;
+
+  ngOnDestroy(): void {
+    if (this.uploadSubscription) {
+      this.uploadSubscription.unsubscribe();
+    }
+  }
 
   ngAfterViewInit(): void {
     this.getManufacturerLogoList();
@@ -113,13 +122,17 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
 
   onUpload() {
     if (this.file) {
-      this.manufacturerLogoService.uploadManufacturerLogo(this.file, this.manufacturerLogoAddForm.get('name').value)
+      if (this.uploadSubscription) {
+        this.uploadSubscription.unsubscribe();
+      }
+      this.uploadSubscription = this.manufacturerLogoService.uploadManufacturerLogo(this.file, this.manufacturerLogoAddForm.get('name').value)
         .subscribe(
           (result) => {
+            console.log("result : " , result)
             if (typeof result === 'number') {
-              console.log(`Upload progress: ${result}%`);
+             // console.log(`Upload progress: ${result}%`);
             } else {
-              console.log('Upload successful. Result:', result);
+              //console.log('Upload successful. Result:', result);
               this.getManufacturerLogoList();
             }
           },
@@ -129,7 +142,6 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit {
         );
     } else {
       console.error('File is undefined!');
-      // Handle the case when file is undefined
     }
   }
 

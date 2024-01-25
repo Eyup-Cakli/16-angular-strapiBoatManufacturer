@@ -82,9 +82,12 @@ export class ManufacturerLogoService extends AbstractResponseService<Manufacture
     return this.http.request(req).pipe(
       map(event => {
         if (event instanceof HttpResponse) {
+          console.log('Upload complete event if:', event);
           return event.body as ManufacturerLogo;
         } else if (event.type === HttpEventType.UploadProgress) {
+          console.log('Upload progress event elif:', event);
           const percentDone = Math.round(100 * event.loaded / event.total);
+          console.log(`Upload progress serv: ${percentDone}%`);
           return percentDone;
         }
       }),
