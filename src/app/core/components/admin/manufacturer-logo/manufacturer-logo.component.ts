@@ -7,8 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { ManufacturerLogoService } from './services/manufacturer-logo.service';
 import { ManufacturerLogo } from './models/manufacturerLogo';
 import { AlertifyService } from 'app/core/services/alertify.service';
-import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
-import { apiToken } from 'environments/apiToken';
+import { HttpClient  } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 
 declare var jQuery: any;
@@ -28,6 +27,7 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
   dataLoaded = false;
 
   file: File | null = null;
+  fileControl = new FormControl(null);
 
   myManufacturerLogoControl = new FormControl("");
 
@@ -94,7 +94,6 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
       this.manufacturerLogo = Object.assign({}, this.manufacturerLogoAddForm.value);
 
       if (!this.manufacturerLogo.id) {
-        //this.addManufacturerLogo();
         this.onUpload();
       } else {
         this.updateManufacturerLogo();
@@ -109,8 +108,6 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
       image: ""
     })
   }
-
-  fileUploadProgress: number;
 
   onFileChanged(event: any) {
     const file = event.target.files[0];
@@ -128,12 +125,12 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
       this.uploadSubscription = this.manufacturerLogoService.uploadManufacturerLogo(this.file, this.manufacturerLogoAddForm.get('name').value)
         .subscribe(
           (result) => {
-            console.log("result : " , result)
-            if (typeof result === 'number') {
-             // console.log(`Upload progress: ${result}%`);
-            } else {
-              //console.log('Upload successful. Result:', result);
+            if (typeof result === 'object' ) {
               this.getManufacturerLogoList();
+              this.manufacturerLogo = new ManufacturerLogo();
+              jQuery('#manufacturerLogo').modal('hide');
+              this.alertifyService.success("Manufacturer logo added successfully.");
+              this.clearFormGroup(this.manufacturerLogoAddForm);
             }
           },
           (error) => {
@@ -144,25 +141,7 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
       console.error('File is undefined!');
     }
   }
-
-  // addManufacturerLogo() {
-  //   this.manufacturerLogoService.createManufacturerLogo(this.manufacturerLogo).subscribe(
-  //     (data) => {
-  //       console.log("data: ", data)
-  //       this.getManufacturerLogoList();
-  //       this.manufacturerLogo = new ManufacturerLogo();
-  //       jQuery('#manufacturerLogo').modal('hide');
-  //       this.alertifyService.success(data);
-  //       this.clearFormGroup(this.manufacturerLogoAddForm);
-  //     },
-  //     (error) => {
-  //       console.log(error);
-  //       this.alertifyService.error(error.error);
-  //     }
-  //   );
-  // }
   
-
   updateManufacturerLogo() {
     this.manufacturerLogoService.updateManufacturerLogo(this.manufacturerLogo).subscribe((data) => {
       var index = this.manufacturerLogoList.findIndex((x) => x.id == this.manufacturerLogo.id);
@@ -201,6 +180,7 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
       }
     });
     this.myManufacturerLogoControl.setValue("");
+    this.fileControl.setValue(null);
   }
 
   applyFilter(event: Event) {

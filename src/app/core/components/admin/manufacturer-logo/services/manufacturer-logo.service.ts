@@ -24,35 +24,10 @@ export class ManufacturerLogoService extends AbstractResponseService<Manufacture
     return this.getDataById(`${environment.getApiUrl}/manufacturer-logos`, id);
   }
 
-  // createManufacturerLogo(manufacturerLogo: ManufacturerLogo): Observable<any> {
-  //   const formData = new FormData();
-
-  //   if (!manufacturerLogo.name) {
-  //     console.error('Invalid manufacturerLogo: ', manufacturerLogo.name);
-  //     return throwError('Invalid manufacturerLogo');
-  //   }
-  
-  //   if (!manufacturerLogo.image) {
-  //     console.error('Invalid manufacturerLogo.image: ', manufacturerLogo.image);
-  //     return throwError('Invalid manufacturerLogo.image');
-  //   }
-  
-
-  //   formData.append('files.image', manufacturerLogo.image, manufacturerLogo.name);
-
-  //   const data = {
-  //     data: {
-  //       name: manufacturerLogo.name || ''
-  //     }
-  //   }
-  
-  //   return this.createData(`${environment.getApiUrl}/manufacturer-logos`, { data, formData });
-  // }
-
   updateManufacturerLogo(manufacturerLogo: ManufacturerLogo): Observable<any> {
     const updateData = {
       data: {
-
+        name: manufacturerLogo.name
       }
     }
     return this.updateData(`${environment.getApiUrl}/manufacturer-logos`, manufacturerLogo.id, updateData);
@@ -82,12 +57,9 @@ export class ManufacturerLogoService extends AbstractResponseService<Manufacture
     return this.http.request(req).pipe(
       map(event => {
         if (event instanceof HttpResponse) {
-          console.log('Upload complete event if:', event);
           return event.body as ManufacturerLogo;
         } else if (event.type === HttpEventType.UploadProgress) {
-          console.log('Upload progress event elif:', event);
           const percentDone = Math.round(100 * event.loaded / event.total);
-          console.log(`Upload progress serv: ${percentDone}%`);
           return percentDone;
         }
       }),
