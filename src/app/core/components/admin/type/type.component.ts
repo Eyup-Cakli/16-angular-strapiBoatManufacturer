@@ -128,8 +128,6 @@ export class TypeComponent implements AfterViewInit, OnInit {
     });
   }
 
-
-
   clearFormGroup(group: FormGroup) {
     group.markAllAsTouched();
     group.reset();
@@ -145,11 +143,12 @@ export class TypeComponent implements AfterViewInit, OnInit {
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    console.log('Filter Value: ', filterValue);
+
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      return data.attributes.name.trim().toLowerCase().includes(filter);
+    };
 
     this.dataSource.filter = filterValue;
-
-    console.log('Filtered Datas: ', filterValue);
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();

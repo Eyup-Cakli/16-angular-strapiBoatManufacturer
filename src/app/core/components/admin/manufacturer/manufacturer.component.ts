@@ -80,6 +80,10 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
 
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      return data.attributes.name.trim().toLowerCase().includes(filter);
+    };
+
     this.dataSource.filter = filterValue;
 
     if (this.dataSource.paginator) {

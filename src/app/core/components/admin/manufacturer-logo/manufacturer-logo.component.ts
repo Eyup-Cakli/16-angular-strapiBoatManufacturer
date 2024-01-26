@@ -210,11 +210,12 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    console.log('Filtre Değeri:', filterValue);
   
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      return data.attributes.name.trim().toLowerCase().includes(filter);
+    };
+
     this.dataSource.filter = filterValue;
-  
-    console.log('Filtrelenmiş Veriler:', filterValue);
   
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
