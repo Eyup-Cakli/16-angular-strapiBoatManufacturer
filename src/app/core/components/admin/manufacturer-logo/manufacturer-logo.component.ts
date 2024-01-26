@@ -3,12 +3,11 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { Subscription } from 'rxjs';
 
 import { ManufacturerLogoService } from './services/manufacturer-logo.service';
 import { ManufacturerLogo } from './models/manufacturerLogo';
 import { AlertifyService } from 'app/core/services/alertify.service';
-import { HttpClient  } from '@angular/common/http';
-import { Subscription } from 'rxjs';
 
 declare var jQuery: any;
 
@@ -43,8 +42,7 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
   constructor(
     private manufacturerLogoService: ManufacturerLogoService,
     private formBuilder: FormBuilder,
-    private alertifyService: AlertifyService,
-    private httpClient: HttpClient
+    private alertifyService: AlertifyService
   ) {}
 
   private uploadSubscription: Subscription;
@@ -94,7 +92,7 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
       this.manufacturerLogo = Object.assign({}, this.manufacturerLogoAddForm.value);
 
       if (!this.manufacturerLogo.id) {
-        this.onUpload();
+        this.createManufacturerLogo();
       } else {
         this.updateManufacturerLogo();
       }
@@ -117,12 +115,12 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
     }
   }
 
-  onUpload() {
+  createManufacturerLogo() {
     if (this.file) {
       if (this.uploadSubscription) {
         this.uploadSubscription.unsubscribe();
       }
-      this.uploadSubscription = this.manufacturerLogoService.uploadManufacturerLogo(this.file, this.manufacturerLogoAddForm.get('name').value)
+      this.uploadSubscription = this.manufacturerLogoService.createManufacturerLogo(this.file, this.manufacturerLogoAddForm.get('name').value)
         .subscribe(
           (result) => {
             if (typeof result === 'object' ) {
@@ -143,21 +141,49 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
   }
   
   updateManufacturerLogo() {
-    this.manufacturerLogoService.updateManufacturerLogo(this.manufacturerLogo).subscribe((data) => {
-      var index = this.manufacturerLogoList.findIndex((x) => x.id == this.manufacturerLogo.id);
-      this.manufacturerLogoList[index] = this.manufacturerLogo;
-      this.dataSource = new MatTableDataSource(this.manufacturerLogoList);
-      this.configDataTable();
-      this.getManufacturerLogoList();
-      this.manufacturerLogo = new ManufacturerLogo();
-      jQuery('#manufacturerLogo').modal('hide');
-      this.alertifyService.success(data);
-      this.clearFormGroup(this.manufacturerLogoAddForm);
-    },
-    (error) => {
-      console.log(error);
-      this.alertifyService.error(error.error);
-    })
+    if (this.manufacturerLogo) {
+      if (this.file) {
+        if (this.uploadSubscription) {
+          this.uploadSubscription.unsubscribe();
+        }
+        this.uploadSubscription = this.manufacturerLogoService.updateManufacturerLogo(this.file, this.manufacturerLogoAddForm.get('name').value, this.manufacturerLogo)
+          .subscribe(
+            (result) => {
+              if (typeof result === 'object' ) {
+                console.log("result: ", result);
+                this.handleUpdateSuccess();
+              }
+            },
+            (error) => {
+              console.error('Update failed. Error:', error);
+            }
+          );
+      } else {
+        this.manufacturerLogoService.updateManufacturerName(this.manufacturerLogo)
+          .subscribe(
+            () => {
+              this.handleUpdateSuccess();
+            },
+            (error) => {
+              console.error('Update failed. Error:', error);
+            }
+          );
+      }
+    } else {
+      console.error('Manufacturer logo is undefined!');
+    }
+  }
+  
+  private handleUpdateSuccess() {
+    var index = this.manufacturerLogoList.findIndex((x) => x.id == this.manufacturerLogo.id);
+    this.manufacturerLogo[index] = this.manufacturerLogo;
+    this.dataSource = new MatTableDataSource(this.manufacturerLogoList);
+    this.configDataTable();
+    this.getManufacturerLogoList();
+    this.manufacturerLogo = new ManufacturerLogo();
+    jQuery('#manufacturerLogo').modal('hide');
+    this.alertifyService.success("Manufacturer logo updated successfully.");
+    this.clearFormGroup(this.manufacturerLogoAddForm);
   }
 
   deleteManufacturerLogo(id: number) {
