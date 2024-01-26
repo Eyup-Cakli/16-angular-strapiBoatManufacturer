@@ -4,7 +4,6 @@ import { Observable } from "rxjs";
 import { environment } from "environments/environment";
 import { Manufacturer } from "../models/manufacturer";
 import { AbstractResponseService } from "../../abstract/abstractResponseService";
-import { data } from "jquery";
 
 @Injectable({
   providedIn: "root",

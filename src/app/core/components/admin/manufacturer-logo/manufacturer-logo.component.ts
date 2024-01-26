@@ -66,7 +66,6 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
       this.manufacturerLogoList = data;
       this.dataLoaded = true;
       this.dataSource = new MatTableDataSource(data);
-      console.log("manufacturerLogoList :", data);
       this.configDataTable();
     })
   }

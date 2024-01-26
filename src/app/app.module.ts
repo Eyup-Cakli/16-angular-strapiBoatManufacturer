@@ -21,6 +21,7 @@ import { CommonModule } from '@angular/common';
 import { HullMaterialComponent } from './core/components/admin/hull-material/hull-material.component';
 import { TypeComponent } from './core/components/admin/type/type.component';
 import { ManufacturerLogoComponent } from './core/components/admin/manufacturer-logo/manufacturer-logo.component';
+import { ManufacturerComponent } from './core/components/admin/manufacturer/manufacturer.component';
 
 // i18 kullanıclak ise aşağıdaki metod aktif edilecek
 
@@ -68,8 +69,8 @@ export function tokenGetter() {
     AdminLayoutComponent,
     HullMaterialComponent,
     TypeComponent,
-    ManufacturerLogoComponent
-
+    ManufacturerLogoComponent,
+    ManufacturerComponent
   ],
 
   providers: [

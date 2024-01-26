@@ -1,1 +1,101 @@
-<p>manufacturer works!</p>
+<div class="main-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header card-header-info">
+              <h4 class="card-title ">{{'Manufacturer List'}}</h4>
+              <a *ngIf="('CreateManufacturerAddForm')" class="pull-right" data-toggle="modal" data-target="#manufacturer">
+                <i style="color:white" title="{{'Add'}}" class="far fa-plus-square fa-2x"></i></a>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <div class="col-md-12 row">
+                  <div *ngIf="dataLoaded==false" class="spinner-border text-info" role="status">
+                    <span class="visually-hidden"></span>
+                  </div>
+                  <div class="col-md-3 ml-auto">
+                    <mat-form-field>
+                      <mat-label>Filter</mat-label>
+                      <input matInput (keyup)="applyFilter($event)" placeholder="" #input>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <table mat-table [dataSource]="dataSource" matSort>
+  
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"name"}}</th>
+                    <td mat-cell *matCellDef="let element">{{element.attributes.name}}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="webSite">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"webSite"}}</th>
+                    <td mat-cell *matCellDef="let element">{{element.attributes.webSite}}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="update">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td style="width: 25px;" mat-cell *matCellDef="let element">
+                      <a data-toggle="modal" data-target="#manufacturer" (click)="getManufacturerById(element.id)">
+                        <i title="{{'Update'}}" style="color: #ff5722;" class="far fa-edit"></i>
+                      </a>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="delete">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td style="width: 25xp;" mat-cell *matCellDef="let element">
+                      <a (confirm)="deleteManufacturer(element.id)" [swal]="deleteSwal">
+                        <i style="color: #D9534E;" class="fas fa-trash-alt"></i>
+                      </a>
+                    </td>
+                  </ng-container>
+  
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+                <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]"></mat-paginator>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal modal-angular fade" id="manufacturer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+            (click)="clearFormGroup(manufacturerAddForm)"><span aria-hidden="true">&times;</span></button>
+          <h4 class="margin-top">
+            {{'Manufacturer Add Form'}}
+          </h4>
+          <div class="separator"></div>
+  
+          <form *ngIf="manufacturerAddForm" [formGroup]="manufacturerAddForm" (ngSubmit)="save()">
+
+            <div class="row">
+              <div class="col col-md-12">
+                <mat-form-field class="example-full-width">
+                  <input matInput placeholder="Manufacturer Logo Name" type="text" id="name" name="name"
+                    formControlName="name" />
+                  <div class="alert alert-danger"
+                    *ngIf="manufacturerAddForm.get('name')!.hasError('name') && manufacturerAddForm.get('name')!.dirty">
+                  </div>
+                </mat-form-field>
+              </div>
+            </div>
+  
+            <button mat-raised-button type="submit" class="btn btn-info pull-right">{{'Save'}}</button>
+            <div class="clearfix"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <swal #deleteSwal title="{{'DeleteConfirm'}}" icon="error" [showCancelButton]="true"
+  [confirmButtonText]="'OK'" [cancelButtonText]="'Cancel'">
+  </swal>
