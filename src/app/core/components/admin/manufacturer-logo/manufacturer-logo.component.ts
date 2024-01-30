@@ -71,7 +71,9 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
   }
 
   getImageUrl(element: ManufacturerLogo) {
-    return "http://localhost:1337" + element
+    const imageUrl = "http://localhost:1337" + element;
+    return imageUrl;
+
   }
 
   getManufacturerLogoById(id: number) {

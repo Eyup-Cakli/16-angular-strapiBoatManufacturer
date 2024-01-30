@@ -17,7 +17,7 @@ export class ManufacturerLogoService extends AbstractResponseService<Manufacture
   }
 
   getManufacturerLogoList(): Observable<ManufacturerLogo[]>{
-    return this.getDataList(`${environment.getApiUrl}/manufacturer-logos`);
+    return this.getDataList(`${environment.getApiUrl}/manufacturer-logos?populate=*`);
   }
 
   getManufacturerLogoById(id: number) {

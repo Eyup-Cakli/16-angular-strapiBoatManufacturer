@@ -7,13 +7,13 @@ export abstract class AbstractResponseService<T> {
     constructor(private httpClient: HttpClient) {}
 
     getDataList(apiUrl: string): Observable<T[]> {
-        return this.httpClient.get<T[]>(apiUrl+"?populate=*", { headers: apiToken }).pipe(
+        return this.httpClient.get<T[]>(apiUrl, { headers: apiToken }).pipe(
             map((res: any) => res.data)
         )
     }
 
     getDataById(apiUrl: string, id:number): Observable<T> {
-        return this.httpClient.get<T>(`${apiUrl}/${id}?populate=*`, { headers: apiToken }).pipe(
+        return this.httpClient.get<T>(`${apiUrl}/${id}`, { headers: apiToken }).pipe(
             map((res: any) => res.data)
         )
     }

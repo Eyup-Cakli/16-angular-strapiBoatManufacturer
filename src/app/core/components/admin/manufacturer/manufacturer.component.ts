@@ -21,9 +21,13 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
   manufacturer: Manufacturer = new Manufacturer();
   dataLoaded = false;
 
-  myMnufacturerControl = new FormControl("");
+  file: File | null = null;
+  fileControl = new FormControl(null);
+
+  myManufacturerControl = new FormControl("");
 
   displayedColumns: string[] = [
+    "image",
     "name",
     "webSite",
     "update",
@@ -47,19 +51,33 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
-      
+      this.createManufacturerAddForm();
   }
 
   getManufacturerList() {
     this.manufacturerService.getManufacturerList().subscribe((data) => {
+      console.log("data: ", data)
       this.manufacturerList = data;
       this.dataLoaded = true;
       this.dataSource = new MatTableDataSource(data);
     })
   }
 
+  getImageUrl(element: Manufacturer) {
+    const imageUrl = "http://localhost:1337" + element;
+    return imageUrl;
+  }
+
   save() {
 
+  }
+
+  createManufacturerAddForm() {
+    this.manufacturerAddForm = this.formBuilder.group({
+      id: [0],
+      name: "",
+      webSite: ""
+    })
   }
 
   clearFormGroup(group: FormGroup) {
@@ -74,7 +92,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
         group.get(key)?.setValue(0);
       }
     });
-    this.myMnufacturerControl.setValue("");
+    this.myManufacturerControl.setValue("");
   }
 
   applyFilter(event: Event) {

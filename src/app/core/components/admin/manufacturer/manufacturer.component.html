@@ -22,6 +22,13 @@
                   </div>
                 </div>
                 <table mat-table [dataSource]="dataSource" matSort>
+
+                  <ng-container matColumnDef="image">
+                    <th mat-header-cell *matHeaderCellDef>{{'image'}}</th>
+                    <td mat-cell *matCellDef="let element">
+                      <img [src]="getImageUrl(element.attributes.manufacturer_logo.data.attributes.image.data.attributes.url)" alt="LogoImage" width="100" height="68">
+                    </td>
+                  </ng-container>
   
                   <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"name"}}</th>
@@ -79,12 +86,34 @@
             <div class="row">
               <div class="col col-md-12">
                 <mat-form-field class="example-full-width">
-                  <input matInput placeholder="Manufacturer Logo Name" type="text" id="name" name="name"
+                  <input matInput placeholder="Manufacturer Name" type="text" id="name" name="name"
                     formControlName="name" />
                   <div class="alert alert-danger"
                     *ngIf="manufacturerAddForm.get('name')!.hasError('name') && manufacturerAddForm.get('name')!.dirty">
                   </div>
                 </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col col-md-12">
+                <mat-form-field class="example-full-width">
+                  <input matInput placeholder="Manufacturer Web Site" type="text" id="webSite" name="webSite"
+                    formControlName="webSite" />
+                  <div class="alert alert-danger"
+                    *ngIf="manufacturerAddForm.get('webSite')!.hasError('webSite') && manufacturerAddForm.get('webSite')!.dirty">
+                  </div>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12 input-group mb-3">
+                <div>
+                  <input type="file" (change)="onFileChanged($event)" accept="image/*" [formControl]="fileControl">
+                  <div class="alert alert-danger" *ngIf="!file && isFormSubmitted">Please upload an image.</div>
+                  <img [src]="image" alt="Uploaded Image" *ngIf="file" width="100" height="68">
+                </div>
               </div>
             </div>
   
