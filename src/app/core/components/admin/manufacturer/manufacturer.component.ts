@@ -6,6 +6,11 @@ import { Manufacturer } from './models/manufacturer';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ManufacturerService } from './services/manufacturer.service';
 import { AlertifyService } from 'app/core/services/alertify.service';
+import { Subscription } from 'rxjs';
+import { ManufacturerLogoService } from '../manufacturer-logo/services/manufacturer-logo.service';
+import { ManufacturerLogo } from '../manufacturer-logo/models/manufacturerLogo';
+
+declare var jQuery: any;
 
 @Component({
   selector: 'app-manufacturer',
@@ -19,6 +24,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
 
   manufacturerList: Manufacturer[] = [];
   manufacturer: Manufacturer = new Manufacturer();
+  manufacturerLogo: ManufacturerLogo = new ManufacturerLogo();
   dataLoaded = false;
 
   file: File | null = null;
@@ -38,12 +44,18 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
 
   constructor(
     private manufacturerService: ManufacturerService,
+    private manufacturerLogoService: ManufacturerLogoService,
     private formBuilder: FormBuilder,
     private alertifyService: AlertifyService
   ) {}
 
+  private uploadSubscription: Subscription;
+
+
   ngOnDestroy(): void {
-      
+    if (this.uploadSubscription) {
+      this.uploadSubscription.unsubscribe();
+    }
   }
 
   ngAfterViewInit(): void {
@@ -56,7 +68,6 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
 
   getManufacturerList() {
     this.manufacturerService.getManufacturerList().subscribe((data) => {
-      console.log("data: ", data)
       this.manufacturerList = data;
       this.dataLoaded = true;
       this.dataSource = new MatTableDataSource(data);
@@ -69,7 +80,15 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
   }
 
   save() {
+    if (this.manufacturerAddForm.valid) {
+      this.manufacturer = Object.assign({}, this.manufacturerAddForm.value);
 
+      if (!this.manufacturer.id) {
+        this.createManufacturer();
+      } else {
+
+      }
+    }
   }
 
   createManufacturerAddForm() {
@@ -79,6 +98,44 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
       webSite: ""
     })
   }
+
+  onFileChanged(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.file = file;
+      this.manufacturerAddForm.patchValue({ image: file.name });
+    }
+  }
+
+  createManufacturer() {
+    if (this.file) {
+      if (this.uploadSubscription) {
+        this.uploadSubscription.unsubscribe();
+      }
+      this.uploadSubscription = this.manufacturerLogoService.createManufacturerLogo(this.file, this.manufacturerAddForm.get('name').value)
+        .subscribe(
+          (result) => {
+            if (typeof result === 'object') {console.log("result : ", result)
+              this.manufacturerLogo = new ManufacturerLogo();
+              jQuery('#manufacturerLogo').modal('hide');
+              this.alertifyService.success("Manufacturer logo added successfully.");
+              this.manufacturerService.createManufacturerWithLogo(this.manufacturer, result).subscribe(
+                (data) => {
+                  console.log("data : ", data)
+                  this.getManufacturerList();
+                  this.manufacturer = new Manufacturer();
+                  jQuery('#manufacturer').modal('hide');
+                  this.alertifyService.success(data);
+                  this.clearFormGroup(this.manufacturerAddForm);
+                }
+              )
+            }
+          }
+        )
+    } else {
+      console.log("You should be upload an manufacturer logo.")
+    }
+  } 
 
   clearFormGroup(group: FormGroup) {
     group.markAllAsTouched();
@@ -93,6 +150,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
       }
     });
     this.myManufacturerControl.setValue("");
+    this.fileControl.setValue(null);
   }
 
   applyFilter(event: Event) {

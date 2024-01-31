@@ -28,40 +28,28 @@ export class ManufacturerService extends AbstractResponseService<Manufacturer> {
     const data = {
       data: {
         name: manufacturer.name,
-        webSite: manufacturer.webSite,
-        image: manufacturer.image
+        webSite: manufacturer.webSite
       }
     }
     return this.createData(`${environment.getApiUrl}/manufacturers`, data);
   }
 
-  createManufacturerWithLogo(manufacturer: Manufacturer, file: File): Observable<any> {
-    // İlk olarak manufacturer logo'sunu oluştur
-    return this.manufacturerLogoService.createManufacturerLogo(file, {
-      name: manufacturer.name,
-      id: 0,
-      image: undefined,
-      url: "",
-      attributes: undefined
-    }).pipe(
-      mergeMap((createdLogo: ManufacturerLogo) => {
-        // Oluşturulan manufacturer logo'sunu kullanarak manufacturer'ı oluştur
-        manufacturer.image = createdLogo.image; // Oluşturulan logo'nun resim adresini manufacturer nesnesine ekliyoruz
-        return this.createManufacturer(manufacturer);
-      }),
-      catchError(error => {
-        console.error('Error creating manufacturer with logo:', error);
-        return Observable.throw('Error creating manufacturer with logo');
-      })
-    );
+  createManufacturerWithLogo(manufacturer: Manufacturer, result: ManufacturerLogo): Observable<any> {
+    const data = {
+      data: {
+        name: manufacturer.name,
+        webSite: manufacturer.webSite,
+        manufacturer_logo: result.data.id
+      }
+    }
+    return this.createData(`${environment.getApiUrl}/manufacturers`, data);
   }
 
   updateManufacturer(manufacturer: Manufacturer): Observable<any>{
     const updateData = {
       data: {
         name: manufacturer.name,
-        webSite: manufacturer.webSite,
-        image: manufacturer.image
+        webSite: manufacturer.webSite
       }
     }
     return this.updateData(`${environment.getApiUrl}/manufacturers`, manufacturer.id, updateData);

@@ -4,4 +4,5 @@ export class ManufacturerLogo {
     image: any;
     url: string;
     attributes: any;
+    data: any;
 }
