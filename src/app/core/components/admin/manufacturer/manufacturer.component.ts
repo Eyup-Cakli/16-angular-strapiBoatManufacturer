@@ -115,13 +115,13 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
       this.uploadSubscription = this.manufacturerLogoService.createManufacturerLogo(this.file, this.manufacturerAddForm.get('name').value)
         .subscribe(
           (result) => {
-            if (typeof result === 'object') {console.log("result : ", result)
+            if (typeof result === 'object') {
               this.manufacturerLogo = new ManufacturerLogo();
               jQuery('#manufacturerLogo').modal('hide');
               this.alertifyService.success("Manufacturer logo added successfully.");
+              
               this.manufacturerService.createManufacturerWithLogo(this.manufacturer, result).subscribe(
                 (data) => {
-                  console.log("data : ", data)
                   this.getManufacturerList();
                   this.manufacturer = new Manufacturer();
                   jQuery('#manufacturer').modal('hide');
@@ -133,7 +133,15 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
           }
         )
     } else {
-      console.log("You should be upload an manufacturer logo.")
+      this.manufacturerService.createManufacturer(this.manufacturer).subscribe(
+        (data) => {
+          this.getManufacturerList();
+          this.manufacturer = new Manufacturer();
+          jQuery('#manufacturer').modal('hide');
+          this.alertifyService.success(data);
+          this.clearFormGroup(this.manufacturerAddForm);
+        }
+      )
     }
   } 
 
