@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnInit, ViewChild, OnDestroy, ElementRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -20,6 +20,7 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
   dataSource: MatTableDataSource<any>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('fileInput') fileInputRef: ElementRef;
 
   manufacturerLogoList: ManufacturerLogo[] = [];
   manufacturerLogo: ManufacturerLogo = new ManufacturerLogo();
@@ -206,6 +207,9 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
     });
     this.myManufacturerLogoControl.setValue("");
     this.fileControl.setValue(null);
+    this.file = null;
+    this.fileControl.reset();
+    this.fileInputRef.nativeElement.value = '';
   }
 
   applyFilter(event: Event) {

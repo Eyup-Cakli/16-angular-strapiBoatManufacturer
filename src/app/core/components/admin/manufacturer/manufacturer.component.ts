@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -21,6 +21,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
   dataSource: MatTableDataSource<any>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('fileInput') fileInputRef: ElementRef;
 
   manufacturerList: Manufacturer[] = [];
   manufacturerLogoList: ManufacturerLogo [] = [];
@@ -169,7 +170,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
   updateManufacturer() {
     var index = this.manufacturerList.findIndex((x) => x.id == this.manufacturer.id)
     this.manufacturerList[index] = this.manufacturer;
-    
+
     if (this.manufacturer.manufacturer_logo.data === null) {
       if (this.file) {
         if (this.uploadSubscription) {
@@ -209,7 +210,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
               if (typeof result === 'object') {
                 this.handleUpdateManufacturerLogoSuccess();
   
-                this.manufacturerService.createManufacturerWithLogo(this.manufacturer, result).subscribe(
+                this.manufacturerService.updateManufacturerWithLogo(this.manufacturer, result).subscribe(
                   (data) => {
                     this.handleUpdateManufacturerSuccess();
                   }
@@ -275,6 +276,9 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
     });
     this.myManufacturerControl.setValue("");
     this.fileControl.setValue(null);
+    this.file = null;
+    this.fileControl.reset();
+    this.fileInputRef.nativeElement.value = '';
   }
 
   applyFilter(event: Event) {
