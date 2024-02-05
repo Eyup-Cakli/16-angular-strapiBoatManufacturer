@@ -80,7 +80,7 @@ export class ManufacturerLogoService extends AbstractResponseService<Manufacture
     );
   }
 
-  updateManufacturerName(manufacturerLogo: ManufacturerLogo): Observable<any> {
+  updateManufacturerLogoName(manufacturerLogo: ManufacturerLogo): Observable<any> {
     const updateData = {
       data: {
         name: manufacturerLogo.name

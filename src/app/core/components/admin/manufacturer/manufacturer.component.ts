@@ -23,6 +23,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
   @ViewChild(MatSort) sort: MatSort;
 
   manufacturerList: Manufacturer[] = [];
+  manufacturerLogoList: ManufacturerLogo [] = [];
   manufacturer: Manufacturer = new Manufacturer();
   manufacturerLogo: ManufacturerLogo = new ManufacturerLogo();
   dataLoaded = false;
@@ -71,12 +72,27 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
       this.manufacturerList = data;
       this.dataLoaded = true;
       this.dataSource = new MatTableDataSource(data);
+      this.configDataTable();
     })
   }
 
   getImageUrl(element: Manufacturer) {
     const imageUrl = "http://localhost:1337" + element;
     return imageUrl;
+  }
+
+  getManufacturerById(id: number) {
+    this.clearFormGroup(this.manufacturerAddForm);
+    this.manufacturerService.getManufacturerById(id).subscribe((data) => {
+      console.log("getManufacturerById data : ", data);
+      this.manufacturer = data;
+      this.manufacturerAddForm.patchValue({
+        id: data.id,
+        name: data.attributes.name,
+        webSite: data.attributes.webSite,
+        manufacturer_logo: data.attributes.manufacturer_logo
+      })
+    })
   }
 
   save() {
@@ -86,7 +102,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
       if (!this.manufacturer.id) {
         this.createManufacturer();
       } else {
-
+        this.updateManufacturer();
       }
     }
   }
@@ -95,7 +111,8 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
     this.manufacturerAddForm = this.formBuilder.group({
       id: [0],
       name: "",
-      webSite: ""
+      webSite: "",
+      manufacturer_logo: ""
     })
   }
 
@@ -116,17 +133,11 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
         .subscribe(
           (result) => {
             if (typeof result === 'object') {
-              this.manufacturerLogo = new ManufacturerLogo();
-              jQuery('#manufacturerLogo').modal('hide');
-              this.alertifyService.success("Manufacturer logo added successfully.");
+              this.handleCreateManufacturerLogoSuccess();
               
               this.manufacturerService.createManufacturerWithLogo(this.manufacturer, result).subscribe(
                 (data) => {
-                  this.getManufacturerList();
-                  this.manufacturer = new Manufacturer();
-                  jQuery('#manufacturer').modal('hide');
-                  this.alertifyService.success(data);
-                  this.clearFormGroup(this.manufacturerAddForm);
+                  this.handleCreateManufacturerSuccess();
                 }
               )
             }
@@ -135,15 +146,120 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
     } else {
       this.manufacturerService.createManufacturer(this.manufacturer).subscribe(
         (data) => {
-          this.getManufacturerList();
-          this.manufacturer = new Manufacturer();
-          jQuery('#manufacturer').modal('hide');
-          this.alertifyService.success(data);
-          this.clearFormGroup(this.manufacturerAddForm);
+          this.handleCreateManufacturerSuccess();
         }
       )
     }
   } 
+
+  private handleCreateManufacturerSuccess() {
+    this.getManufacturerList();
+    this.manufacturer = new Manufacturer();
+    jQuery('#manufacturer').modal('hide');
+    this.alertifyService.success("Manufacturer created successfully");
+    this.clearFormGroup(this.manufacturerAddForm);
+  }
+
+  private handleCreateManufacturerLogoSuccess() {
+    this.manufacturerLogo = new ManufacturerLogo();
+    jQuery('#manufacturerLogo').modal('hide');
+    this.alertifyService.success("Manufacturer logo added successfully.");
+  }
+
+  updateManufacturer() {
+    var index = this.manufacturerList.findIndex((x) => x.id == this.manufacturer.id)
+    this.manufacturerList[index] = this.manufacturer;
+    
+    if (this.manufacturer.manufacturer_logo.data === null) {
+      if (this.file) {
+        if (this.uploadSubscription) {
+          this.uploadSubscription.unsubscribe();
+        }
+        this.uploadSubscription = this.manufacturerLogoService.createManufacturerLogo(this.file, this.manufacturerAddForm.get('name').value)
+          .subscribe(
+            (result) => {
+              if (typeof result === 'object') {
+                this.handleCreateManufacturerLogoSuccess();
+                
+                this.manufacturerService.updateManufacturerWithLogo(this.manufacturer, result).subscribe(
+                  (data) => {
+                    this.handleUpdateManufacturerSuccess();
+                  }
+                )
+              }
+            }
+          )
+      } else {
+        this.manufacturerService.updateManufacturer(this.manufacturer).subscribe(
+          (data) => {
+            this.handleUpdateManufacturerSuccess();
+            return;
+          }
+        )
+      }
+    } else {
+      if (this.file) {
+        console.log("this.file")
+        if (this.uploadSubscription) {
+          this.uploadSubscription.unsubscribe();
+        }
+        this.uploadSubscription = this.manufacturerLogoService.updateManufacturerLogo(this.file, this.manufacturerAddForm.get('name').value, this.manufacturerLogo)
+          .subscribe(
+            (result) => {
+              if (typeof result === 'object') {
+                this.handleUpdateManufacturerLogoSuccess();
+  
+                this.manufacturerService.createManufacturerWithLogo(this.manufacturer, result).subscribe(
+                  (data) => {
+                    this.handleUpdateManufacturerSuccess();
+                  }
+                )
+              }
+            }
+          )
+      } else {
+        console.log("else");
+        this.manufacturerLogoService.updateManufacturerLogoName(this.manufacturerLogo).subscribe(
+          () => {
+            this.handleUpdateManufacturerLogoSuccess();
+  
+            this.manufacturerService.updateManufacturer(this.manufacturer).subscribe(
+              (data) => {
+                console.log("data : ", data)
+                this.handleUpdateManufacturerSuccess();
+              }
+            )
+          }
+        )
+      }
+    } 
+  }
+
+  private handleUpdateManufacturerLogoSuccess() {
+    var index = this.manufacturerList.findIndex((x) => x.manufacturer_logo.id == this.manufacturerLogo.id);
+    this.manufacturerLogo[index] = this.manufacturerLogo;
+    this.dataSource = new MatTableDataSource(this.manufacturerLogoList);
+    this.configDataTable();
+    this.manufacturerLogo = new ManufacturerLogo();
+    jQuery('#manufacturerLogo').modal('hide');
+    this.alertifyService.success("Manufacturer logo name updated successfully.")
+  }
+
+  private handleUpdateManufacturerSuccess() {
+    var index = this.manufacturerList.findIndex((x) => x.id == this.manufacturer.id);
+    this.manufacturerList[index] = this.manufacturer;
+    this.dataSource = new MatTableDataSource(this.manufacturerList);
+    this.configDataTable();
+    this.getManufacturerList();
+    this.manufacturer = new Manufacturer();
+    jQuery('#manufacturer').modal('hide');
+    this.alertifyService.success("Manufacturer updated successfully.");
+    this.clearFormGroup(this.manufacturerAddForm);
+  }
+
+  deleteManufacturer(id: number) {
+    this.manufacturerService
+  }
 
   clearFormGroup(group: FormGroup) {
     group.markAllAsTouched();

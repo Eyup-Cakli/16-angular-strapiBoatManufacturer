@@ -80,7 +80,6 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
     this.clearFormGroup(this.manufacturerLogoAddForm);
     this.manufacturerLogoService.getManufacturerLogoById(id).subscribe((data) => {
       this.manufacturerLogo = data;
-      console.log("logo: ", data);
       this.manufacturerLogoAddForm.patchValue({
         id: data.id,
         name: data.attributes.name
@@ -151,7 +150,6 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
           .subscribe(
             (result) => {
               if (typeof result === 'object' ) {
-                console.log("result: ", result);
                 this.handleUpdateSuccess();
               }
             },
@@ -160,7 +158,7 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
             }
           );
       } else {
-        this.manufacturerLogoService.updateManufacturerName(this.manufacturerLogo)
+        this.manufacturerLogoService.updateManufacturerLogoName(this.manufacturerLogo)
           .subscribe(
             () => {
               this.handleUpdateSuccess();

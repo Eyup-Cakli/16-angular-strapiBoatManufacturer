@@ -5,7 +5,6 @@ import { environment } from "environments/environment";
 import { Manufacturer } from "../models/manufacturer";
 import { AbstractResponseService } from "../../abstract/abstractResponseService";
 import { ManufacturerLogoService } from "../../manufacturer-logo/services/manufacturer-logo.service";
-import { catchError, mergeMap } from "rxjs/operators";
 import { ManufacturerLogo } from "../../manufacturer-logo/models/manufacturerLogo";
 
 @Injectable({
@@ -20,8 +19,8 @@ export class ManufacturerService extends AbstractResponseService<Manufacturer> {
     return this.getDataList(`${environment.getApiUrl}/manufacturers?populate=manufacturer_logo.image`);
   }
 
-  getManufacturerLogoById(id: number) {
-    return this.getDataById(`${environment.getApiUrl}/manufacturers?populate=manufacturer_logo.image`, id);
+  getManufacturerById(id: number) {
+    return this.getDataById(`${environment.getApiUrl}/manufacturers`, id, "?populate=manufacturer_logo.image");
   }
 
   createManufacturer(manufacturer: Manufacturer): Observable<any> {
@@ -50,6 +49,17 @@ export class ManufacturerService extends AbstractResponseService<Manufacturer> {
       data: {
         name: manufacturer.name,
         webSite: manufacturer.webSite
+      }
+    }
+    return this.updateData(`${environment.getApiUrl}/manufacturers`, manufacturer.id, updateData);
+  }
+
+  updateManufacturerWithLogo(manufacturer: Manufacturer, result: ManufacturerLogo): Observable<any> {
+    const updateData = {
+      data: {
+        name: manufacturer.name,
+        webSite: manufacturer.webSite,
+        manufacturer_logo: result.data.id
       }
     }
     return this.updateData(`${environment.getApiUrl}/manufacturers`, manufacturer.id, updateData);

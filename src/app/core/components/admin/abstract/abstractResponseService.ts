@@ -12,8 +12,8 @@ export abstract class AbstractResponseService<T> {
         )
     }
 
-    getDataById(apiUrl: string, id:number): Observable<T> {
-        return this.httpClient.get<T>(`${apiUrl}/${id}`, { headers: apiToken }).pipe(
+    getDataById(apiUrl: string, id:number, populateParams: string = ""): Observable<T> {
+        return this.httpClient.get<T>(`${apiUrl}/${id}${populateParams}`, { headers: apiToken }).pipe(
             map((res: any) => res.data)
         )
     }
