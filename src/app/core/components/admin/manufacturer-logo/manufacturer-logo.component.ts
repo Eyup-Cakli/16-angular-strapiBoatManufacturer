@@ -159,7 +159,7 @@ export class ManufacturerLogoComponent implements AfterViewInit, OnInit, OnDestr
             }
           );
       } else {
-        this.manufacturerLogoService.updateManufacturerLogoName(this.manufacturerLogo)
+        this.manufacturerLogoService.updateManufacturerLogoName(this.manufacturerLogoAddForm.get('name').value ,this.manufacturerLogo)
           .subscribe(
             () => {
               this.handleUpdateSuccess();

@@ -49,7 +49,8 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
     private manufacturerLogoService: ManufacturerLogoService,
     private formBuilder: FormBuilder,
     private alertifyService: AlertifyService
-  ) {}
+  ) {
+  }
 
   private uploadSubscription: Subscription;
 
@@ -66,11 +67,22 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
 
   ngOnInit(): void {
       this.createManufacturerAddForm();
+      this.getManufacturerLogoList(); // manufacturerLogoList'i almak için bu fonksiyonu çağırın
+      this.getManufacturerList(); // manufacturerList'i almak için bu fonksiyonu çağırın
   }
 
   getManufacturerList() {
     this.manufacturerService.getManufacturerList().subscribe((data) => {
       this.manufacturerList = data;
+      this.dataLoaded = true;
+      this.dataSource = new MatTableDataSource(data);
+      this.configDataTable();
+    })
+  }
+
+  getManufacturerLogoList() {
+    this.manufacturerLogoService.getManufacturerLogoList().subscribe((data) => {
+      this.manufacturerLogoList = data;
       this.dataLoaded = true;
       this.dataSource = new MatTableDataSource(data);
       this.configDataTable();
@@ -171,74 +183,76 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
     var index = this.manufacturerList.findIndex((x) => x.id == this.manufacturer.id)
     this.manufacturerList[index] = this.manufacturer;
 
-    if (this.manufacturer.manufacturer_logo.data === null) {
-      if (this.file) {
-        if (this.uploadSubscription) {
-          this.uploadSubscription.unsubscribe();
-        }
-        this.uploadSubscription = this.manufacturerLogoService.createManufacturerLogo(this.file, this.manufacturerAddForm.get('name').value)
-          .subscribe(
-            (result) => {
-              if (typeof result === 'object') {
-                this.handleCreateManufacturerLogoSuccess();
-                
-                this.manufacturerService.updateManufacturerWithLogo(this.manufacturer, result).subscribe(
-                  (data) => {
-                    this.handleUpdateManufacturerSuccess();
-                  }
-                )
-              }
-            }
-          )
-      } else {
-        this.manufacturerService.updateManufacturer(this.manufacturer).subscribe(
-          (data) => {
-            this.handleUpdateManufacturerSuccess();
-            return;
+    this.manufacturerLogoService.getManufacturerLogoById(this.manufacturer.manufacturer_logo.data.id).subscribe((data) => {
+      this.manufacturerLogo = data;
+
+      if (this.manufacturer.manufacturer_logo.data === null) {
+        if (this.file) {
+          if (this.uploadSubscription) {
+            this.uploadSubscription.unsubscribe();
           }
-        )
-      }
-    } else {
-      if (this.file) {
-        console.log("this.file")
-        if (this.uploadSubscription) {
-          this.uploadSubscription.unsubscribe();
-        }
-        this.uploadSubscription = this.manufacturerLogoService.updateManufacturerLogo(this.file, this.manufacturerAddForm.get('name').value, this.manufacturerLogo)
-          .subscribe(
-            (result) => {
-              if (typeof result === 'object') {
-                this.handleUpdateManufacturerLogoSuccess();
-  
-                this.manufacturerService.updateManufacturerWithLogo(this.manufacturer, result).subscribe(
-                  (data) => {
-                    this.handleUpdateManufacturerSuccess();
-                  }
-                )
-              }
-            }
-          )
-      } else {
-        console.log("else");
-        this.manufacturerLogoService.updateManufacturerLogoName(this.manufacturerLogo).subscribe(
-          () => {
-            this.handleUpdateManufacturerLogoSuccess();
-  
-            this.manufacturerService.updateManufacturer(this.manufacturer).subscribe(
-              (data) => {
-                console.log("data : ", data)
-                this.handleUpdateManufacturerSuccess();
+          this.uploadSubscription = this.manufacturerLogoService.createManufacturerLogo(this.file, this.manufacturerAddForm.get('name').value)
+            .subscribe(
+              (result) => {
+                if (typeof result === 'object') {
+                  this.handleCreateManufacturerLogoSuccess();
+                  
+                  this.manufacturerService.updateManufacturerWithLogo(this.manufacturer, result).subscribe(
+                    (data) => {
+                      this.handleUpdateManufacturerSuccess();
+                    }
+                  )
+                }
               }
             )
+        } else {
+          this.manufacturerService.updateManufacturer(this.manufacturer).subscribe(
+            (data) => {
+              this.handleUpdateManufacturerSuccess();
+              return;
+            }
+          )
+        }
+      } else {
+        if (this.file) {
+          console.log("this.file")
+          if (this.uploadSubscription) {
+            this.uploadSubscription.unsubscribe();
           }
-        )
-      }
-    } 
-  }
+          this.uploadSubscription = this.manufacturerLogoService.updateManufacturerLogo(this.file, this.manufacturerAddForm.get('name').value, this.manufacturerLogo).subscribe(
+              (result) => {
+                if (typeof result === 'object') {
+                  this.handleUpdateManufacturerLogoSuccess();
+    
+                  this.manufacturerService.updateManufacturerWithLogo(this.manufacturer, result).subscribe(
+                    (data) => {
+                      this.handleUpdateManufacturerSuccess();
+                    }
+                  )
+                }
+              }
+            )
+        } else {
+          this.manufacturerLogoService.updateManufacturerLogoName(this.manufacturerAddForm.get('name').value, this.manufacturerLogo).subscribe(
+            () => {
+              this.handleUpdateManufacturerLogoSuccess();
+    
+              this.manufacturerService.updateManufacturer(this.manufacturer).subscribe(
+                (data) => {
+                  console.log("data : ", data)
+                  this.handleUpdateManufacturerSuccess();
+                }
+              )
+            }
+          )
+        }
+      } 
+    });
+}
 
   private handleUpdateManufacturerLogoSuccess() {
-    var index = this.manufacturerList.findIndex((x) => x.manufacturer_logo.id == this.manufacturerLogo.id);
-    this.manufacturerLogo[index] = this.manufacturerLogo;
+    var index = this.manufacturerLogoList.findIndex((x) => x.id == this.manufacturer.manufacturer_logo.data.id);
+    this.manufacturerLogoList[index] = this.manufacturerLogo;
     this.dataSource = new MatTableDataSource(this.manufacturerLogoList);
     this.configDataTable();
     this.manufacturerLogo = new ManufacturerLogo();
