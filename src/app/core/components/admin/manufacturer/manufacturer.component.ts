@@ -97,7 +97,6 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
   getManufacturerById(id: number) {
     this.clearFormGroup(this.manufacturerAddForm);
     this.manufacturerService.getManufacturerById(id).subscribe((data) => {
-      console.log("getManufacturerById data : ", data);
       this.manufacturer = data;
       this.manufacturerAddForm.patchValue({
         id: data.id,
@@ -149,7 +148,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
               this.handleCreateManufacturerLogoSuccess();
               
               this.manufacturerService.createManufacturerWithLogo(this.manufacturer, result).subscribe(
-                (data) => {
+                () => {
                   this.handleCreateManufacturerSuccess();
                 }
               )
@@ -158,7 +157,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
         )
     } else {
       this.manufacturerService.createManufacturer(this.manufacturer).subscribe(
-        (data) => {
+        () => {
           this.handleCreateManufacturerSuccess();
         }
       )
@@ -198,7 +197,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
                   this.handleCreateManufacturerLogoSuccess();
                   
                   this.manufacturerService.updateManufacturerWithLogo(this.manufacturer, result).subscribe(
-                    (data) => {
+                    () => {
                       this.handleUpdateManufacturerSuccess();
                     }
                   )
@@ -207,7 +206,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
             )
         } else {
           this.manufacturerService.updateManufacturer(this.manufacturer).subscribe(
-            (data) => {
+            () => {
               this.handleUpdateManufacturerSuccess();
               return;
             }
@@ -215,7 +214,6 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
         }
       } else {
         if (this.file) {
-          console.log("this.file")
           if (this.uploadSubscription) {
             this.uploadSubscription.unsubscribe();
           }
@@ -225,7 +223,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
                   this.handleUpdateManufacturerLogoSuccess();
     
                   this.manufacturerService.updateManufacturerWithLogo(this.manufacturer, result).subscribe(
-                    (data) => {
+                    () => {
                       this.handleUpdateManufacturerSuccess();
                     }
                   )
@@ -239,7 +237,6 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
     
               this.manufacturerService.updateManufacturer(this.manufacturer).subscribe(
                 (data) => {
-                  console.log("data : ", data)
                   this.handleUpdateManufacturerSuccess();
                 }
               )
