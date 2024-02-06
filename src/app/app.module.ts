@@ -22,6 +22,7 @@ import { HullMaterialComponent } from './core/components/admin/hull-material/hul
 import { TypeComponent } from './core/components/admin/type/type.component';
 import { ManufacturerLogoComponent } from './core/components/admin/manufacturer-logo/manufacturer-logo.component';
 import { ManufacturerComponent } from './core/components/admin/manufacturer/manufacturer.component';
+import { ModelComponent } from './core/components/admin/model/model.component';
 
 // i18 kullanıclak ise aşağıdaki metod aktif edilecek
 
@@ -70,7 +71,8 @@ export function tokenGetter() {
     HullMaterialComponent,
     TypeComponent,
     ManufacturerLogoComponent,
-    ManufacturerComponent
+    ManufacturerComponent,
+    ModelComponent
   ],
 
   providers: [

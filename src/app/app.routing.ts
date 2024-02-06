@@ -7,6 +7,7 @@ import { HullMaterialComponent } from './core/components/admin/hull-material/hul
 import { TypeComponent } from './core/components/admin/type/type.component';
 import { ManufacturerLogoComponent } from './core/components/admin/manufacturer-logo/manufacturer-logo.component';
 import { ManufacturerComponent } from './core/components/admin/manufacturer/manufacturer.component';
+import { ModelComponent } from './core/components/admin/model/model.component';
 // import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 // import { LoginComponent } from './login/login.component';
 
@@ -37,6 +38,9 @@ const routes: Routes =[
     },{
       path: 'manufacturer',
       component: ManufacturerComponent
+    },{
+      path: 'model',
+      component: ModelComponent
     }]
   }
 ];

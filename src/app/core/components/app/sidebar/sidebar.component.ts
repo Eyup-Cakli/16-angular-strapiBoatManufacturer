@@ -16,7 +16,8 @@ export const USERROUTES: RouteInfo[] = [
   { path: '/hull-material', title: 'Boat Hull Metarial', icon: 'build', class: '', claim: "" },
   { path: '/type', title: 'Boat Type', icon: 'category', class: '', claim: "" },
   { path: '/manufacturer-logo', title: 'Manufacturer Logo', icon: 'perm_media', class: '', claim: ''},
-  { path: '/manufacturer', title: 'Manufacturer', icon: 'directions_boat', class: '', claim: ''}
+  { path: '/manufacturer', title: 'Manufacturer', icon: 'directions_boat', class: '', claim: ''},
+  { path: '/model', title: 'Model', icon: 'list_alt', class: '', claim: ''}
 ]
   
 
