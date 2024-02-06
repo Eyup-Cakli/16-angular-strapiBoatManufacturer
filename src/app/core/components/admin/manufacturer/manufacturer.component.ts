@@ -67,8 +67,8 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
 
   ngOnInit(): void {
       this.createManufacturerAddForm();
-      this.getManufacturerLogoList(); // manufacturerLogoList'i almak için bu fonksiyonu çağırın
-      this.getManufacturerList(); // manufacturerList'i almak için bu fonksiyonu çağırın
+      this.getManufacturerLogoList();
+      this.getManufacturerList(); 
   }
 
   getManufacturerList() {
@@ -245,7 +245,7 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
         }
       } 
     });
-}
+  }
 
   private handleUpdateManufacturerLogoSuccess() {
     var index = this.manufacturerLogoList.findIndex((x) => x.id == this.manufacturer.manufacturer_logo.data.id);
@@ -270,7 +270,25 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
   }
 
   deleteManufacturer(id: number) {
-    this.manufacturerService
+    this.manufacturerService.getManufacturerById(id).subscribe((data) => {
+      this.manufacturer = data;
+      console.log("manufacturer : ", this.manufacturer)
+
+      this.manufacturerLogoService.getManufacturerLogoById(this.manufacturer.attributes.manufacturer_logo.data.id).subscribe((data) => {
+        this.manufacturerLogo = data;
+  
+        this.manufacturerLogoService.deleteManufacturerLogo(this.manufacturerLogo.id).subscribe(() => {
+          this.alertifyService.success("Manufacturer logo deleted.");
+  
+          this.manufacturerService.deleteManufacturer(id).subscribe(() => {
+            this.alertifyService.success("Manufacturer deleted.");
+            this.manufacturerList = this.manufacturerList.filter((x) => x.id != id);
+            this.dataSource = new MatTableDataSource(this.manufacturerList);
+            this.configDataTable();
+          })
+        })
+      })
+    })
   }
 
   clearFormGroup(group: FormGroup) {
