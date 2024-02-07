@@ -1,9 +1,9 @@
 export class Model {
-    id: Number;
+    id: number;
     name: string;
-    lengthMeter: Number;
-    beamMeter: Number;
-    draftMeter: Number;
+    lengthMeter: number;
+    beamMeter: number;
+    draftMeter: number;
     manufacturer: any;
     type: any;
     hull_material: any;
