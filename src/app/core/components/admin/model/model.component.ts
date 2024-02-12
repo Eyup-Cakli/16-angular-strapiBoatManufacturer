@@ -33,14 +33,12 @@ export class ModelComponent implements AfterViewInit, OnInit {
   typeList: Type[] = [];
   materialList: HullMaterial[] = [];
 
-  model: Model = new Model; 
-
+  model: Model = new Model;
   dataLoaded = false; 
 
-  myMaterialControl = new FormControl("");
   myManufacturerControl = new FormControl("");
   myTypeControl = new FormControl("");
-  myHullMaterialControll = new FormControl("");
+  myHullMaterialControl = new FormControl("");
 
   filteredManufacturer: Observable<Manufacturer[]>;
   filteredType: Observable<Type[]>;
@@ -74,7 +72,7 @@ export class ModelComponent implements AfterViewInit, OnInit {
     this.getModelList();
     this.getManufacturerList();
     this.getTypeList();
-    this.getHullMetarialList();
+    this.getHullMaterialList();
   }
 
   ngOnInit(): void {
@@ -110,7 +108,6 @@ export class ModelComponent implements AfterViewInit, OnInit {
   getManufacturerList() {
     this.manufacturerService.getManufacturerList().subscribe((data) => {
       this.manufacturerList = data;
-      console.log("data : ", data);
 
       this.filteredManufacturer = this.myManufacturerControl.valueChanges.pipe(
         startWith(""),
@@ -129,7 +126,7 @@ export class ModelComponent implements AfterViewInit, OnInit {
   }
 
   displayFnManufacturer(manufacturer: Manufacturer): string {
-    return manufacturer && manufacturer.name;
+    return manufacturer && manufacturer.attributes.name;
   }
 
   getTypeList() {
@@ -153,16 +150,16 @@ export class ModelComponent implements AfterViewInit, OnInit {
   }
 
   displayFnType(type: Type) {
-    return type && type.name;
+    return type && type.attributes.name;
   }
 
-  getHullMetarialList() {
+  getHullMaterialList() {
     this.materialService.getHullMaterialList().subscribe((data) => {
       this.materialList = data;
 
-      this.filteredMaterial = this.myMaterialControl.valueChanges.pipe(
+      this.filteredMaterial = this.myHullMaterialControl.valueChanges.pipe(
         startWith(""),
-        map((value: string | any) => (typeof value === "string" ? value : value)),
+        map((value: string | any) => (typeof value === "string" ? value : value.name)),
         map((name) => name ? this._hullMaterialFilter(name) : this.materialList.slice())
       )
     })
@@ -172,30 +169,59 @@ export class ModelComponent implements AfterViewInit, OnInit {
     const filterValue = value.toLowerCase();
 
     return this.materialList.filter((option) => 
-    option.attributes.name.toLowerCase().includes(filterValue)    
+    option.attributes.name.toLowerCase().includes(filterValue)
     );
   }
 
-  displayFnMetarial(metarial: HullMaterial) {
-    return metarial && metarial.name;
+  displayFnMaterial(metarial: HullMaterial) {
+    return metarial && metarial.attributes.name;
   }
 
-  save() {}
+  save() {
+    if (this.modelAddForm.valid) {
+      this.model = Object.assign({}, this.modelAddForm.value);
+
+      if (!this.model.id) {
+        this.createModel();
+      } else {
+        this.updateModel();
+      }
+    }
+  }
 
   createModelAddForm() {
     this.modelAddForm = this.formBuilder.group({
       id: [0],
       name: "",
-      lengthMeter: [0],
-      beamMeter: [0],
-      draftMeter: [0],
+      lengthMeter: "",
+      beamMeter: "",
+      draftMeter: "",
       manufacturer: [0],
       type: [0],
-      hull_Material: [0]
+      hull_material: [0]
     });
   }
 
-  createModel() {}
+  createModel() {
+    // Assign the selected objects to the model properties
+    this.model.manufacturer = this.myManufacturerControl.value;
+    this.model.type = this.myTypeControl.value;
+    this.model.hull_material = this.myHullMaterialControl.value;
+
+    this.modelService.createModel(this.model).subscribe(
+      (data) => {
+        console.log("create model : " , this.model);
+        this. getModelList();
+        this.model = new Model();
+        jQuery('#model').modal('hide');
+        this.alertifyService.success(data);
+        this.clearFormGroup(this.modelAddForm);
+      },
+      (error) => {
+        console.log(error);
+      }
+    )
+  }
 
   updateModel() {}
 
@@ -211,7 +237,9 @@ export class ModelComponent implements AfterViewInit, OnInit {
         group.get(key)?.setValue(0);
       }
     });
-    this.myMaterialControl.setValue("");
+    this.myManufacturerControl.setValue("");
+    this.myTypeControl.setValue("");
+    this.myHullMaterialControl.setValue("");
   }
 
   applyFilter(event: Event) {
