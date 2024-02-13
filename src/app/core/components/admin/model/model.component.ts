@@ -265,7 +265,14 @@ export class ModelComponent implements AfterViewInit, OnInit {
     })
   }
 
-  deleteModel(id: number) {}
+  deleteModel(id: number) {
+    this.modelService.deleteModel(id).subscribe((data) => {
+      this.alertifyService.success(data.toString());
+      this.modelList = this.modelList.filter((x) => x.id !=id);
+      this.dataSource = new MatTableDataSource(this.modelList);
+      this.configDataTable();
+    })
+  }
 
   clearFormGroup(group: FormGroup) {
     group.markAllAsTouched();
