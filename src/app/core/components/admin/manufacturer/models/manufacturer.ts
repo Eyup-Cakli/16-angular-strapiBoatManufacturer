@@ -2,7 +2,7 @@ export class Manufacturer {
     id: number;
     name: string;
     webSite: string;
-    //data: any;
+    data: any;
     attributes: any;
     manufacturer_logo: any;
 }

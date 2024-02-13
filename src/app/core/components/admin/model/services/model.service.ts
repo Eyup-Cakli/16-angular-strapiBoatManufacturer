@@ -44,9 +44,9 @@ export class ModelService extends AbstractResponseService<Model> {
         lengthMeter: model.lengthMeter,
         beamMeter: model.beamMeter,
         draftMeter: model.draftMeter,
-        manufacturer: null,
-        type: null,
-        hull_material: null
+        manufacturer: model.manufacturer.id,
+        type: model.type.id,
+        hull_material: model.hull_material.id
       }
     }
     return this.updateData(`${environment.getApiUrl}/models`, model.id, updateData)

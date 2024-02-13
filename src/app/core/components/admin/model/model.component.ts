@@ -91,16 +91,18 @@ export class ModelComponent implements AfterViewInit, OnInit {
   getModelById(id: number) {
     this.clearFormGroup(this.modelAddForm);
     this.modelService.getModelById(id).subscribe((data) => {
-      this.model =data;
+      console.log("getModelById data : ", data)
+      this.model = data;
+
+      this.myManufacturerControl.setValue(data.attributes.manufacturer);
+      this.myTypeControl.setValue(data.attributes.type);
+      this.myHullMaterialControl.setValue(data.attributes.hull_material)
       this.modelAddForm.patchValue({
         id: data.id,
         name: data.attributes.name,
         lengthMeter: data.attributes.lengthMeter,
         beamMeter: data.attributes.beamMeter,
-        draftMeter: data.attributes.draftMeter,
-        manufacturer: data.attributes.manufacturer,
-        type: data.attributes.type,
-        hull_material: data.attributes.hull_material
+        draftMeter: data.attributes.draftMeter
       })
     })
   }
@@ -126,7 +128,13 @@ export class ModelComponent implements AfterViewInit, OnInit {
   }
 
   displayFnManufacturer(manufacturer: Manufacturer): string {
-    return manufacturer && manufacturer.attributes.name;
+    if (manufacturer && manufacturer.data && manufacturer.data.attributes && manufacturer.data.attributes.name) {
+      return manufacturer.data.attributes.name;
+    } if (manufacturer && manufacturer.attributes && manufacturer.attributes.name) {
+      return manufacturer.attributes.name;
+    } else {
+      return "";
+    }
   }
 
   getTypeList() {
@@ -150,7 +158,13 @@ export class ModelComponent implements AfterViewInit, OnInit {
   }
 
   displayFnType(type: Type) {
-    return type && type.attributes.name;
+    if (type && type.data && type.data.attributes && type.data.attributes.name) {
+      return type.data.attributes.name;
+    } if (type && type.attributes && type.attributes.name) {
+      return type.attributes.name;
+    } else {
+      return "";
+    }
   }
 
   getHullMaterialList() {
@@ -173,8 +187,14 @@ export class ModelComponent implements AfterViewInit, OnInit {
     );
   }
 
-  displayFnMaterial(metarial: HullMaterial) {
-    return metarial && metarial.attributes.name;
+  displayFnMaterial(material: HullMaterial) {
+    if (material && material.data && material.data.attributes && material.data.attributes.name) {
+      return material.data.attributes.name;
+    } if (material && material.attributes && material.attributes.name) {
+      return material.attributes.name;
+    } else {
+      return "";
+    }
   }
 
   save() {
@@ -203,7 +223,6 @@ export class ModelComponent implements AfterViewInit, OnInit {
   }
 
   createModel() {
-    // Assign the selected objects to the model properties
     this.model.manufacturer = this.myManufacturerControl.value;
     this.model.type = this.myTypeControl.value;
     this.model.hull_material = this.myHullMaterialControl.value;
@@ -223,7 +242,28 @@ export class ModelComponent implements AfterViewInit, OnInit {
     )
   }
 
-  updateModel() {}
+  updateModel() {
+    this.model.manufacturer = this.myManufacturerControl.value;
+    this.model.type = this.myTypeControl.value;
+    this.model.hull_material = this.myHullMaterialControl.value;
+    
+    this.modelService.updateModel(this.model).subscribe((data) => {
+      console.log("updated data : ", data);
+      var index = this.modelList.findIndex((x) => x.id == this.model.id);
+      this.modelList[index] = this.model;
+      this.dataSource = new MatTableDataSource(this.modelList);
+      this.configDataTable();
+      this.getModelList();
+      this.model = new Model();
+      jQuery("#model").modal("hide");
+      this.alertifyService.success(data);
+      this.clearFormGroup(this.modelAddForm);
+    },
+    (error) => {
+      console.log(error);
+      this.alertifyService.error(error.error);
+    })
+  }
 
   deleteModel(id: number) {}
 
