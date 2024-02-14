@@ -185,11 +185,8 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
     this.manufacturerLogoService.getManufacturerLogoById(this.manufacturer.manufacturer_logo.data.id).subscribe((data) => {
       this.manufacturerLogo = data;
 
-      if (this.manufacturer.manufacturer_logo.data === null) {
-        if (this.file) {
-          if (this.uploadSubscription) {
-            this.uploadSubscription.unsubscribe();
-          }
+      if (this.file) {
+        if (this.manufacturer.manufacturer_logo.data === null) {
           this.uploadSubscription = this.manufacturerLogoService.createManufacturerLogo(this.file, this.manufacturerAddForm.get('name').value)
             .subscribe(
               (result) => {
@@ -205,45 +202,34 @@ export class ManufacturerComponent implements AfterViewInit, OnInit, OnDestroy{
               }
             )
         } else {
-          this.manufacturerService.updateManufacturer(this.manufacturer).subscribe(
-            () => {
-              this.handleUpdateManufacturerSuccess();
-              return;
+          this.uploadSubscription = this.manufacturerLogoService.updateManufacturerLogo(this.file, this.manufacturerAddForm.get('name').value, this.manufacturerLogo).subscribe(
+            (result) => {
+              if (typeof result === 'object') {
+                this.handleUpdateManufacturerLogoSuccess();
+  
+                this.manufacturerService.updateManufacturerWithLogo(this.manufacturer, result).subscribe(
+                  () => {
+                    this.handleUpdateManufacturerSuccess();
+                  }
+                )
+              }
             }
           )
         }
       } else {
-        if (this.file) {
-          if (this.uploadSubscription) {
-            this.uploadSubscription.unsubscribe();
-          }
-          this.uploadSubscription = this.manufacturerLogoService.updateManufacturerLogo(this.file, this.manufacturerAddForm.get('name').value, this.manufacturerLogo).subscribe(
-              (result) => {
-                if (typeof result === 'object') {
-                  this.handleUpdateManufacturerLogoSuccess();
-    
-                  this.manufacturerService.updateManufacturerWithLogo(this.manufacturer, result).subscribe(
-                    () => {
-                      this.handleUpdateManufacturerSuccess();
-                    }
-                  )
-                }
+        console.log("else");
+        this.manufacturerLogoService.updateManufacturerLogoName(this.manufacturerAddForm.get('name').value, this.manufacturerLogo).subscribe(
+          () => {
+            this.handleUpdateManufacturerLogoSuccess();
+  
+            this.manufacturerService.updateManufacturer(this.manufacturer).subscribe(
+              () => {
+                this.handleUpdateManufacturerSuccess();
               }
             )
-        } else {
-          this.manufacturerLogoService.updateManufacturerLogoName(this.manufacturerAddForm.get('name').value, this.manufacturerLogo).subscribe(
-            () => {
-              this.handleUpdateManufacturerLogoSuccess();
-    
-              this.manufacturerService.updateManufacturer(this.manufacturer).subscribe(
-                (data) => {
-                  this.handleUpdateManufacturerSuccess();
-                }
-              )
-            }
-          )
-        }
-      } 
+          }
+        )
+      }
     });
   }
 

@@ -55,4 +55,8 @@ export class ModelService extends AbstractResponseService<Model> {
   deleteModel(id: number) {
     return this.deleteData(`${environment.getApiUrl}/models`, id);
   }
+
+  deleteModelByManufacturerId(id: Number) {
+    
+  }
 }
